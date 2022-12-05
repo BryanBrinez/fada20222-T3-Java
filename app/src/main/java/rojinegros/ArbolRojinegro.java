@@ -14,6 +14,11 @@ public class ArbolRojinegro {
 
     @Getter
     @Setter
+    private ArbolRojinegro father;
+
+
+    @Getter
+    @Setter
     private ArbolRojinegro der;
 
     @Getter
@@ -47,26 +52,86 @@ public class ArbolRojinegro {
         throw new OperationNotSupportedException();
     }
 
-    public int maximo() throws Exception {
-        throw new OperationNotSupportedException();
+    public int maximo() throws OperationNotSupportedException {
+        if (this.der == null) {
+            return this.valor;
+        }
+        else{
+            return this.der.maximo();
+        }
     }
 
-    public int minimo() throws Exception {
-        throw new OperationNotSupportedException();
+    public int minimo() throws OperationNotSupportedException {
+        if (this.izq == null) {
+            return this.valor;
+        }
+        else{
+            return this.izq.minimo();
+        }
+
     }
 
-    public ArbolRojinegro search(int x) throws Exception {
-        throw new OperationNotSupportedException();
+    public ArbolRojinegro search(int valorBuscar) throws NullPointerException {
+        if (this.valor == valorBuscar) {
+            return this;
+        }
+        else {
+            if (valorBuscar >= this.valor) {
+                if(this.getDer() != null) {
+                    return this.getDer().search(valorBuscar);
+                }
+                else {
+                    return null;
+                }
+            }
+            else {
+                if (this.getIzq() != null){
+                    return this.getIzq().search(valorBuscar);
+                }
+                else {
+                    return null;
+                }
+            }
+        }
     }
 
-    public void rotacionIzquierda(int x) throws Exception {
-        throw new OperationNotSupportedException();
+    public void rotacionIzquierda(int nodoRotar) throws OperationNotSupportedException {
+        ArbolRojinegro nodo = this.search(nodoRotar);
+
+        ArbolRojinegro x = nodo.der;
+        nodo.der = x.izq;
+        x.izq = nodo;
     }
 
-    public void rotacionDerecha(int x) throws  Exception {
-        throw new OperationNotSupportedException();
-    }
+    public void rotacionDerecha(int nodoRotar) throws  OperationNotSupportedException {
+        //ArbolRojinegro nodo = this.search(nodoRotar);
 
+        //String arbol = this.bfs();
+
+        ArbolRojinegro copia = this;
+
+
+
+
+
+
+
+        //ArbolRojinegro arbolGuardar = this.getIzq().getDer();
+
+        //this.getIzq().setDer(this.getIzq().getFather());
+
+        //this.setIzq(arbolGuardar);
+
+
+       // this.getIzq().setDer(this.father);
+        System.out.println(this.bfs());
+
+
+
+
+
+        System.out.println(this.bfs()+ " el nodo que es");
+    }
     /*
      *  Area de pruebas, no modificar.
      */
