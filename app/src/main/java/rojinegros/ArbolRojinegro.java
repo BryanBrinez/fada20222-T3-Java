@@ -55,8 +55,7 @@ public class ArbolRojinegro {
     public int maximo() throws OperationNotSupportedException {
         if (this.der == null) {
             return this.valor;
-        }
-        else{
+        } else {
             return this.der.maximo();
         }
     }
@@ -64,8 +63,7 @@ public class ArbolRojinegro {
     public int minimo() throws OperationNotSupportedException {
         if (this.izq == null) {
             return this.valor;
-        }
-        else{
+        } else {
             return this.izq.minimo();
         }
 
@@ -74,64 +72,83 @@ public class ArbolRojinegro {
     public ArbolRojinegro search(int valorBuscar) throws NullPointerException {
         if (this.valor == valorBuscar) {
             return this;
-        }
-        else {
+        } else {
             if (valorBuscar >= this.valor) {
-                if(this.getDer() != null) {
+                if (this.getDer() != null) {
                     return this.getDer().search(valorBuscar);
-                }
-                else {
+                } else {
                     return null;
                 }
-            }
-            else {
-                if (this.getIzq() != null){
+            } else {
+                if (this.getIzq() != null) {
                     return this.getIzq().search(valorBuscar);
-                }
-                else {
+                } else {
                     return null;
                 }
             }
         }
     }
 
-    public void rotacionIzquierda(int nodoRotar) throws OperationNotSupportedException {
-        ArbolRojinegro nodo = this.search(nodoRotar);
+    //rotacion izquierda
+    public void rotacionIzquierda(int nodoRotar) throws Exception {
+        ArbolRojinegro x = this.search(nodoRotar);
 
-        ArbolRojinegro x = nodo.der;
-        nodo.der = x.izq;
-        x.izq = nodo;
+        ArbolRojinegro y = x.getDer();
+        ArbolRojinegro padre = x.getFather();
+        x.setDer(y.getIzq());
+        y.setIzq(x);
+
+        if (x.getFather() == null) {
+            x.setFather(y);
+            ArbolRojinegro raiz = x.getFather();
+            ArbolRojinegro tmpFather = x.getFather();
+            ArbolRojinegro tmpIzq = x.getIzq();
+            ArbolRojinegro tmpDer = x.getDer();
+            int tmpValor = x.valor;
+
+            x.setIzq(raiz);
+            x.setDer(raiz.getDer());
+            x.setValor(raiz.getValor());
+
+            raiz.setFather(tmpFather);
+            raiz.setIzq(tmpIzq);
+            raiz.setDer(tmpDer);
+            raiz.setValor(tmpValor);
+
+        }
+
     }
 
-    public void rotacionDerecha(int nodoRotar) throws  OperationNotSupportedException {
-        //ArbolRojinegro nodo = this.search(nodoRotar);
+    public void rotacionDerecha(int nodoRotar) throws OperationNotSupportedException {
 
-        //String arbol = this.bfs();
+        ArbolRojinegro y = this.search(nodoRotar);
+        ArbolRojinegro x = y.getIzq();
+        ArbolRojinegro padre = y.getFather();
+        y.setIzq(x.getDer());
+        x.setDer(y);
+        if (y.getFather() == null) {
+            y.setFather(x);
+            ArbolRojinegro raiz = y.getFather();
 
-        ArbolRojinegro copia = this;
+            ArbolRojinegro tmpFather = y.getFather();
+            ArbolRojinegro tmpIzq = y.getIzq();
+            ArbolRojinegro tmpDer = y.getDer();
+            int tmpValor = y.valor;
 
+            //this.father = null;
+            y.setDer(raiz);
+            y.setIzq(raiz.getIzq());
+            y.setValor(raiz.getValor());
 
+            raiz.setFather(tmpFather);
+            raiz.setIzq(tmpIzq);
+            raiz.setDer(tmpDer);
+            raiz.setValor(tmpValor);
 
-
-
-
-
-        //ArbolRojinegro arbolGuardar = this.getIzq().getDer();
-
-        //this.getIzq().setDer(this.getIzq().getFather());
-
-        //this.setIzq(arbolGuardar);
-
-
-       // this.getIzq().setDer(this.father);
-        System.out.println(this.bfs());
-
-
-
-
-
-        System.out.println(this.bfs()+ " el nodo que es");
+        }
     }
+
+
     /*
      *  Area de pruebas, no modificar.
      */
