@@ -48,9 +48,78 @@ public class ArbolRojinegro {
      * Metodos a implementar
      */
 
-    public void insertar(int x) throws Exception {
-        throw new OperationNotSupportedException();
+    public void insertar(int dato) throws OperationNotSupportedException {
+
+        ArbolRojinegro padre = this;
+        ArbolRojinegro nodo = new ArbolRojinegro();
+        nodo.setValor(dato);
+        nodo.setBlack(false);
+
+        if (dato > padre.getValor()) {
+            if (padre.getDer() == null) {
+                padre.setDer(nodo);
+                coloresRojoNegro(nodo);
+
+            } else {
+                padre.getDer().insertar(dato);
+                coloresRojoNegro(nodo);
+            }
+        } else {
+            if (padre.getIzq() == null) {
+                padre.setIzq(nodo);
+                coloresRojoNegro(nodo);
+
+            } else {
+                padre.getIzq().insertar(dato);
+                coloresRojoNegro(nodo);
+            }
+        }
+
+
     }
+
+
+    public void coloresRojoNegro(ArbolRojinegro nodoIngresar) throws OperationNotSupportedException {
+        //Caso 1 si el padre del nodo ingresado es rojo y su tio igual, se cambia el color del abuelo a rojo y del padre y su tio a negro
+
+        if (nodoIngresar.getFather() != null && nodoIngresar.getFather().getFather().getIzq() != null) {
+            if (!nodoIngresar.getFather().black && !nodoIngresar.getFather().getFather().getIzq().black) {
+
+                nodoIngresar.getFather().getFather().black = false;
+                nodoIngresar.getFather().black = true;
+                nodoIngresar.getFather().getFather().getIzq().black = true;
+            }
+        }
+
+        // Si la raiz es rojo se cambia a negro para cumplir el requisito de que la raiz es siempre negra
+        if (!this.black) {
+            this.black = true;
+        }
+
+        //Caso 2 si el padre del nodo ingresado es rojo y el no tiene tio se cambia el padre a negro y el abuelo a rojo
+        if (nodoIngresar.getFather() != null) {
+            if (!nodoIngresar.getFather().black && nodoIngresar.getFather().getFather().getIzq() == null) {
+                nodoIngresar.getFather().black = true;
+                nodoIngresar.getFather().getFather().black = false;
+                //Debido a que se viola la propiedad de cantidad de nodos negros por lado se realiza la rotacion izquierda
+                nodoIngresar.getFather().getFather().rotacionIzquierda(nodoIngresar.getFather().getFather().valor);
+            }
+        }
+
+        //caso 3
+        if (nodoIngresar.getFather() != null) {
+            if (nodoIngresar.getFather().getDer() == null && !nodoIngresar.getFather().black
+                    && nodoIngresar.getFather().getFather().getDer() == nodoIngresar.getFather()) {
+
+                nodoIngresar.getFather().black = true;
+                nodoIngresar.getFather().getFather().black = false;
+                nodoIngresar.getFather().getFather().rotacionIzquierda(nodoIngresar.getFather().getFather().valor);
+            }
+        }
+
+
+    }
+
 
     public int maximo() throws OperationNotSupportedException {
         if (this.der == null) {
@@ -90,32 +159,32 @@ public class ArbolRojinegro {
     }
 
     //rotacion izquierda
-    public void rotacionIzquierda(int nodoRotar) throws Exception {
+    public void rotacionIzquierda(int nodoRotar) throws OperationNotSupportedException {
         ArbolRojinegro x = this.search(nodoRotar);
 
         ArbolRojinegro y = x.getDer();
         ArbolRojinegro padre = x.getFather();
+
         x.setDer(y.getIzq());
         y.setIzq(x);
+        x.setFather(y);
 
-        if (x.getFather() == null) {
-            x.setFather(y);
-            ArbolRojinegro raiz = x.getFather();
-            ArbolRojinegro tmpFather = x.getFather();
-            ArbolRojinegro tmpIzq = x.getIzq();
-            ArbolRojinegro tmpDer = x.getDer();
-            int tmpValor = x.valor;
+        ArbolRojinegro raiz = x.getFather();
+        ArbolRojinegro padreTemporal = x.getFather();
+        ArbolRojinegro izquierdoTemporal = x.getIzq();
+        ArbolRojinegro derechoTemporal = x.getDer();
 
-            x.setIzq(raiz);
-            x.setDer(raiz.getDer());
-            x.setValor(raiz.getValor());
+        int valorTemporal = x.valor;
 
-            raiz.setFather(tmpFather);
-            raiz.setIzq(tmpIzq);
-            raiz.setDer(tmpDer);
-            raiz.setValor(tmpValor);
+        x.setIzq(raiz);
+        x.setDer(raiz.getDer());
+        x.setValor(raiz.getValor());
 
-        }
+        raiz.setFather(padreTemporal);
+        raiz.setIzq(izquierdoTemporal);
+        raiz.setDer(derechoTemporal);
+        raiz.setValor(valorTemporal);
+
 
     }
 
@@ -124,28 +193,28 @@ public class ArbolRojinegro {
         ArbolRojinegro y = this.search(nodoRotar);
         ArbolRojinegro x = y.getIzq();
         ArbolRojinegro padre = y.getFather();
+
         y.setIzq(x.getDer());
         x.setDer(y);
-        if (y.getFather() == null) {
-            y.setFather(x);
-            ArbolRojinegro raiz = y.getFather();
+        y.setFather(x);
 
-            ArbolRojinegro tmpFather = y.getFather();
-            ArbolRojinegro tmpIzq = y.getIzq();
-            ArbolRojinegro tmpDer = y.getDer();
-            int tmpValor = y.valor;
+        ArbolRojinegro raiz = y.getFather();
+        ArbolRojinegro padreTemporal = y.getFather();
+        ArbolRojinegro izquierdoTemporal = y.getIzq();
+        ArbolRojinegro derechoTemporal = y.getDer();
 
-            //this.father = null;
-            y.setDer(raiz);
-            y.setIzq(raiz.getIzq());
-            y.setValor(raiz.getValor());
+        int valorTemporal = y.valor;
 
-            raiz.setFather(tmpFather);
-            raiz.setIzq(tmpIzq);
-            raiz.setDer(tmpDer);
-            raiz.setValor(tmpValor);
+        y.setDer(raiz);
+        y.setIzq(raiz.getIzq());
+        y.setValor(raiz.getValor());
 
-        }
+        raiz.setFather(padreTemporal);
+        raiz.setIzq(izquierdoTemporal);
+        raiz.setDer(derechoTemporal);
+        raiz.setValor(valorTemporal);
+
+
     }
 
 
